@@ -234,15 +234,15 @@ void WorldInHandNavigation::rotate(
     glm::vec3 t = m_refPositionValid ? m_referencePosition : m_center;
 
     glm::mat4x4 transform = glm::mat4x4();
-    transform = glm::translate(transform, t);
+    transform = glm::translate(transform, m_eye);
     transform = glm::rotate(transform, hAngle, m_cameraCapability.up());
     transform = glm::rotate(transform, vAngle, rotAxis);
-    transform = glm::translate(transform, -t);
+    transform = glm::translate(transform, -m_eye);
 
     glm::vec4 newEye = transform * glm::vec4(m_eye, 1.f);
     glm::vec4 newCenter = transform * glm::vec4(m_center, 1.f);
 
-    m_cameraCapability.setEye(glm::vec3(newEye));
+    //m_cameraCapability.setEye(glm::vec3(newEye));
     m_cameraCapability.setCenter(glm::vec3(newCenter));
 }
 
@@ -279,7 +279,7 @@ void WorldInHandNavigation::scaleAtMouse(
     // the new viewray-groundplane intersection as new center.
     const glm::vec3 newCenter = center + scale * (intersectPoint - center);
 
-    m_cameraCapability.setCenter(navigationmath::rayPlaneIntersection(intersects, newEye, newCenter));
+    m_cameraCapability.setCenter(newCenter);
 }
 
 void WorldInHandNavigation::resetScaleAtMouse(const glm::ivec2 & mouse)
