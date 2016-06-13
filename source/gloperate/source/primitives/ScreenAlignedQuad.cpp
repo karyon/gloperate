@@ -28,15 +28,13 @@ namespace gloperate
 
 const char * ScreenAlignedQuad::s_defaultVertexShaderSource = R"(
 #version 140
-#extension GL_ARB_explicit_attrib_location : require
 
-layout (location = 0) in vec2 a_vertex;
 out vec2 v_uv;
 
 void main()
 {
-    v_uv = a_vertex * 0.5 + 0.5;
-    gl_Position = vec4(a_vertex, 0.0, 1.0);
+    v_uv = vec2( (gl_VertexID << 1) & 2, gl_VertexID & 2 );
+    gl_Position = vec4( v_uv * vec2( 2.0, 2.0 ) + vec2( -1.0, -1.0) , 0.0, 1.0 );
 }
 )";
 
@@ -121,12 +119,6 @@ void ScreenAlignedQuad::initialize()
     m_buffer = new Buffer();
     m_buffer->setData(raw, gl::GL_STATIC_DRAW); //needed for some drivers
 
-    auto binding = m_vao->binding(0);
-    binding->setAttribute(0);
-    binding->setBuffer(m_buffer, 0, sizeof(glm::vec2));
-    binding->setFormat(2, gl::GL_FLOAT, gl::GL_FALSE, 0);
-    m_vao->enable(0);
-
     setSamplerUniform(0);
 }
 
@@ -138,7 +130,8 @@ void ScreenAlignedQuad::draw()
     }
 
     m_program->use();
-    m_vao->drawArrays(gl::GL_TRIANGLE_STRIP, 0, 4);
+    m_vao->drawArrays(gl::GL_TRIANGLES, 0, 3);
+
     m_program->release();
 
     if (m_texture) {
