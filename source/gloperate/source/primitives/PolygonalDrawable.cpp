@@ -93,9 +93,14 @@ PolygonalDrawable::~PolygonalDrawable()
 
 void PolygonalDrawable::draw()
 {
+    draw(GL_TRIANGLES);
+}
+
+void PolygonalDrawable::draw(gl::GLenum primitive)
+{
     // Draw triangles
     m_vao->bind();
-    m_vao->drawElements(GL_TRIANGLES, m_size, GL_UNSIGNED_INT, nullptr);
+    m_vao->drawElements(primitive, m_size, GL_UNSIGNED_INT, nullptr);
     m_vao->unbind();
 }
 
